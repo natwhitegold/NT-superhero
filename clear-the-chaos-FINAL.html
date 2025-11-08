@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operation Automation: Clear the Chaos! 🦸‍♀️</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #1a1a3e 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        #game-container {
+            box-shadow: 0 0 60px rgba(109, 212, 200, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #6DD4C8;
+        }
+        .info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #6DD4C8;
+            max-width: 340px;
+            z-index: 1000;
+        }
+        .info h2 { color: #6DD4C8; margin-bottom: 12px; font-size: 22px; text-shadow: 0 0 10px #6DD4C8; }
+        .info h3 { color: #FFD700; margin: 10px 0 5px; font-size: 15px; }
+        .info p { color: #fff; margin: 5px 0; font-size: 13px; line-height: 1.6; }
+        .good { color: #6DD4C8; font-weight: bold; }
+        .bad { color: #FF6B6B; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h2>🦸‍♀️ Clear the Chaos!</h2>
+        <h3>🎮 Controls</h3>
+        <p>⬆️⬇️⬅️➡️ or W/A/S/D to fly</p>
+        <h3>✨ <span class="good">COLLECT (Good!)</span></h3>
+        <p>📧 Emails • 📋 Tasks • 📄 Documents<br>Clear the chaos by automating them!</p>
+        <h3>⚡ Power-Ups</h3>
+        <p>✋ <span class="good">Extra Hands</span> - Auto-collect everything!<br>
+        ⚙️ Speed Boost • 🤖 AI Helper</p>
+        <h3>❌ <span class="bad">AVOID (Bad!)</span></h3>
+        <p>🐛 Red Bugs & Errors only!</p>
+        <p style="margin-top: 10px; font-style: italic; color: #FFD700;">Collect work → Clear chaos → Transform the world! ✨</p>
+    </div>
+    
+    <div id="game-container"></div>
+
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        // HAPPY UPLIFTING SOUNDS! 🎵
+        function playCollect() {
+            // Bright ascending bells - ding-ding-DING!
+            [523.25, 659.25, 783.99].forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const time = audioCtx.currentTime + (i * 0.07);
+                osc.frequency.setValueAtTime(freq, time);
+                gain.gain.setValueAtTime(0.15, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+                osc.type = 'sine';
+                osc.start(time);
+                osc.stop(time + 0.2);
+            });
+        }
+
+        function playPowerUp() {
+            // Magical ascending sparkle
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.5);
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + 0.5);
+            
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            
+            osc.type = 'sine';
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        function playExtraHands() {
+            // Teamwork chime - multiple notes together
+            [523, 659, 784].forEach(freq => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+                osc.type = 'sine';
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.8);
+            });
+        }
+
+        function playTransform() {
+            // Ethereal whoosh
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 1);
+            
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+            
+            osc.type = 'sine';
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1);
+        }
+
+        function playBonk() {
+            // Soft bonk - not harsh!
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            osc.type = 'sine';
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        function playWhoosh() {
+            // Gentle flying sound
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.type = 'sine';
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+        }
+
+        function playVictory() {
+            // Happy fanfare
+            [523, 659, 784, 1047].forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const time = audioCtx.currentTime + (i * 0.12);
+                osc.frequency.setValueAtTime(freq, time);
+                gain.gain.setValueAtTime(0.15, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.4);
+                osc.type = 'sine';
+                osc.start(time);
+                osc.stop(time + 0.4);
+            });
+        }
+
+        const config = {
+            type: Phaser.AUTO,
+            width: 1200,
+            height: 700,
+            parent: 'game-container',
+            backgroundColor: '#2a2a4e',
+            physics: {
+                default: 'arcade',
+                arcade: { gravity: { y: 0 }, debug: false }
+            },
+            scene: { preload, create, update }
+        };
+
+        const game = new Phaser.Game(config);
+
+        let player, capeSprite, emblemText, aura, cursors, keys;
+        let collectibles, dangers, powerups;
+        let score = 0, itemsCleared = 0, highScore = localStorage.getItem('clearChaosHS') || 0;
+        let scoreText, clearedText, highScoreText, messageText, phaseText;
+        let gameOver = false, gameSpeed = 200;
+        let collectTimer = 0, dangerTimer = 0, powerupTimer = 0;
+        let chaosElements, cleanElements;
+        let extraHandsActive = false, extraHandsTimer = 0;
+        let speedBoost = false, aiBot, aiBotActive = false;
+        let phase = 1, lastWhoosh = 0;
+        let chaosLevel = 100; // Starts at 100%, decreases as you clear items
+
+        function preload() {}
+
+        function create() {
+            this.input.once('pointerdown', () => {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            });
+
+            // Create chaos background
+            chaosElements = this.add.group();
+            cleanElements = this.add.group();
+            createEnvironment(this);
+
+            // Create Natalie with ALL details!
+            createNatalie(this);
+
+            // Create sprites
+            createSprites(this);
+
+            // Groups
+            collectibles = this.physics.add.group();
+            dangers = this.physics.add.group();
+            powerups = this.physics.add.group();
+
+            // Input
+            cursors = this.input.keyboard.createCursorKeys();
+            keys = this.input.keyboard.addKeys('W,S,A,D');
+
+            // Collisions
+            this.physics.add.overlap(player, collectibles, collectItem, null, this);
+            this.physics.add.overlap(player, dangers, hitDanger, null, this);
+            this.physics.add.overlap(player, powerups, getPowerUp, null, this);
+
+            // UI
+            scoreText = this.add.text(1050, 16, 'Score: 0', {
+                fontSize: '28px', fill: '#6DD4C8', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 4
+            }).setOrigin(1, 0);
+
+            clearedText = this.add.text(1050, 50, 'Cleared: 0', {
+                fontSize: '20px', fill: '#FFD700', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 3
+            }).setOrigin(1, 0);
+
+            highScoreText = this.add.text(1050, 78, `High: ${highScore}`, {
+                fontSize: '18px', fill: '#FFF', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 3
+            }).setOrigin(1, 0);
+
+            phaseText = this.add.text(600, 16, 'Phase 1: Clear the Office!', {
+                fontSize: '24px', fill: '#FFD700', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 4
+            }).setOrigin(0.5, 0);
+
+            messageText = this.add.text(600, 100, '', {
+                fontSize: '32px', fill: '#6DD4C8', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 6
+            }).setOrigin(0.5).setDepth(1000);
+
+            showWelcome(this);
+        }
+
+        function createNatalie(scene) {
+            // Create cape as separate animated sprite first
+            const capeG = scene.add.graphics();
+            capeG.fillStyle(0xDC143C);
+            // Simple flowing cape shape using polygon
+            capeG.fillTriangle(25, 0, 8, 60, 25, 75);
+            capeG.fillTriangle(25, 0, 42, 60, 25, 75);
+            // Add some wave to the edges
+            capeG.fillCircle(8, 60, 8);
+            capeG.fillCircle(42, 60, 8);
+            capeG.fillCircle(25, 75, 10);
+            capeG.generateTexture('cape', 50, 80);
+            capeG.destroy();
+
+            // Main body
+            const g = scene.add.graphics();
+            
+            // Body
+            g.fillStyle(0xD91C5C);
+            g.fillRoundedRect(19, 41, 23, 30, 4);
+            
+            // Belt
+            g.fillStyle(0xFFD700);
+            g.fillRect(17, 68, 26, 6);
+            g.fillCircle(30, 71, 4); // Belt buckle
+            
+            // Shorts
+            g.fillStyle(0x000080);
+            g.fillRoundedRect(20, 72, 20, 14, 2);
+            
+            // Legs with detail
+            g.fillStyle(0xFFDAB9);
+            g.fillRect(23, 83, 6, 17);
+            g.fillRect(32, 83, 6, 17);
+            // Knee joints
+            g.fillCircle(26, 91, 3);
+            g.fillCircle(35, 91, 3);
+            
+            // Boots with detail
+            g.fillStyle(0xDC143C);
+            g.fillRoundedRect(21, 97, 9, 8, 2);
+            g.fillRoundedRect(30, 97, 9, 8, 2);
+            g.fillStyle(0xFFD700);
+            g.fillRect(21, 99, 9, 2); // Boot straps
+            g.fillRect(30, 99, 9, 2);
+            
+            // Back arm
+            g.fillStyle(0xFFDAB9);
+            g.fillRect(14, 44, 6, 19);
+            g.fillCircle(17, 62, 4);
+            // Elbow
+            g.fillCircle(17, 53, 3);
+            
+            // Emblem base
+            g.fillStyle(0xFFD700);
+            g.fillRoundedRect(26, 50, 15, 15, 2);
+            g.fillStyle(0xFFA500);
+            g.fillRoundedRect(28, 52, 11, 11, 1);
+            
+            // Head with detail
+            g.fillStyle(0xFFDAB9);
+            g.fillCircle(30, 32, 12);
+            // Face features
+            g.fillStyle(0x000000);
+            g.fillCircle(26, 30, 2); // Eyes
+            g.fillCircle(34, 30, 2);
+            g.lineStyle(2, 0x000000);
+            g.beginPath();
+            g.arc(30, 35, 4, 0, Math.PI); // Smile
+            g.strokePath();
+            
+            // Hair with volume
+            g.fillStyle(0x4a2c0f);
+            g.fillCircle(25, 24, 10);
+            g.fillCircle(35, 24, 10);
+            g.fillCircle(30, 20, 10);
+            g.fillCircle(22, 28, 8);
+            g.fillCircle(38, 28, 8);
+            
+            // Tiara with gem
+            g.fillStyle(0xFFD700);
+            g.fillRoundedRect(22, 26, 16, 4, 2);
+            g.fillStyle(0xFF1493);
+            g.fillCircle(30, 26, 3);
+            
+            // Forward arm
+            g.fillStyle(0xFFDAB9);
+            g.fillRect(41, 41, 6, 23);
+            g.fillCircle(44, 52, 3); // Elbow
+            g.fillCircle(44, 36, 5); // Fist
+            // Flying pose - fist forward
+            g.fillStyle(0xFFDAB9);
+            g.fillCircle(48, 32, 4);
+            
+            g.generateTexture('natalie', 60, 110);
+            g.destroy();
+
+            // Create cape sprite first (behind player)
+            capeSprite = scene.add.sprite(150, 350, 'cape');
+            capeSprite.setScale(1.2);
+            capeSprite.setDepth(98);
+            capeSprite.setOrigin(0.5, 0.1); // Pivot at top
+
+            // Create player
+            player = scene.physics.add.sprite(150, 350, 'natalie');
+            player.setCollideWorldBounds(true);
+            player.setScale(1.2);
+            player.setDepth(99);
+
+            // Emblem N
+            emblemText = scene.add.text(player.x, player.y + 8, 'N', {
+                fontSize: '18px', fill: '#D91C5C', fontStyle: 'bold', fontFamily: 'Arial'
+            }).setOrigin(0.5).setDepth(100);
+
+            // Glowing aura
+            aura = scene.add.circle(player.x, player.y, 50, 0x6DD4C8, 0).setDepth(97);
+            scene.tweens.add({
+                targets: aura,
+                alpha: 0.2,
+                scale: 1.1,
+                duration: 1000,
+                yoyo: true,
+                repeat: -1
+            });
+        }
+
+        function createSprites(scene) {
+            // COLLECTIBLES (Good - Teal/Blue/Green)
+            
+            // Email (teal)
+            const e1 = scene.add.graphics();
+            e1.fillStyle(0x6DD4C8);
+            e1.fillRoundedRect(0, 0, 35, 28, 4);
+            e1.fillStyle(0xFFFFFF);
+            e1.fillTriangle(17.5, 5, 5, 12, 30, 12);
+            e1.lineStyle(2, 0xFFFFFF);
+            e1.strokeRoundedRect(3, 3, 29, 22, 3);
+            e1.generateTexture('email', 35, 28);
+            e1.destroy();
+
+            // Task (blue)
+            const e2 = scene.add.graphics();
+            e2.fillStyle(0x5DADE2);
+            e2.fillRoundedRect(0, 0, 30, 35, 3);
+            e2.fillStyle(0xFFFFFF);
+            e2.fillRect(5, 8, 20, 3);
+            e2.fillRect(5, 14, 20, 3);
+            e2.fillRect(5, 20, 15, 3);
+            // Checkboxes
+            e2.lineStyle(2, 0x27AE60);
+            e2.strokeRect(5, 8, 3, 3);
+            e2.strokeRect(5, 14, 3, 3);
+            e2.generateTexture('task', 30, 35);
+            e2.destroy();
+
+            // Document (green)
+            const e3 = scene.add.graphics();
+            e3.fillStyle(0x27AE60);
+            e3.fillRoundedRect(0, 0, 28, 36, 3);
+            e3.fillStyle(0xFFFFFF);
+            e3.fillRect(5, 8, 18, 2);
+            e3.fillRect(5, 13, 18, 2);
+            e3.fillRect(5, 18, 18, 2);
+            e3.fillRect(5, 23, 12, 2);
+            e3.generateTexture('document', 28, 36);
+            e3.destroy();
+
+            // DANGER (Bad - Red)
+            const d1 = scene.add.graphics();
+            d1.fillStyle(0xFF0000);
+            d1.fillCircle(20, 20, 18);
+            d1.fillStyle(0xFFFFFF);
+            // X mark
+            d1.lineStyle(4, 0xFFFFFF);
+            d1.beginPath();
+            d1.moveTo(12, 12);
+            d1.lineTo(28, 28);
+            d1.moveTo(28, 12);
+            d1.lineTo(12, 28);
+            d1.strokePath();
+            d1.generateTexture('bug', 40, 40);
+            d1.destroy();
+
+            // Extra Hands (Golden)
+            const p1 = scene.add.graphics();
+            p1.fillStyle(0xFFD700);
+            p1.fillCircle(25, 25, 22);
+            p1.fillStyle(0xFFDAB9);
+            p1.fillRect(10, 20, 8, 12);
+            p1.fillCircle(14, 32, 4);
+            p1.fillRect(32, 20, 8, 12);
+            p1.fillCircle(36, 32, 4);
+            // Sparkles
+            p1.fillStyle(0xFFFFFF);
+            p1.fillCircle(15, 15, 2);
+            p1.fillCircle(35, 15, 2);
+            p1.fillCircle(25, 35, 2);
+            p1.generateTexture('hands', 50, 50);
+            p1.destroy();
+
+            // Gear (Golden)
+            const p2 = scene.add.graphics();
+            p2.fillStyle(0xFFD700);
+            p2.fillCircle(20, 20, 16);
+            for(let i = 0; i < 8; i++) {
+                const angle = (i * 45) * Math.PI / 180;
+                p2.fillCircle(20 + Math.cos(angle) * 18, 20 + Math.sin(angle) * 18, 5);
+            }
+            p2.fillStyle(0xFFA500);
+            p2.fillCircle(20, 20, 8);
+            p2.generateTexture('gear', 40, 40);
+            p2.destroy();
+
+            // AI Bot (Golden)
+            const p3 = scene.add.graphics();
+            p3.fillStyle(0xFFD700);
+            p3.fillRoundedRect(5, 10, 30, 25, 5);
+            p3.fillStyle(0x000000);
+            p3.fillCircle(15, 20, 4);
+            p3.fillCircle(25, 20, 4);
+            p3.fillRect(12, 28, 16, 3);
+            p3.generateTexture('aibot', 40, 40);
+            p3.destroy();
+        }
+
+        function createEnvironment(scene) {
+            // Chaos elements (papers, clutter)
+            for(let i = 0; i < 30; i++) {
+                const chaos = scene.add.rectangle(
+                    Phaser.Math.Between(0, 1200),
+                    Phaser.Math.Between(0, 700),
+                    Phaser.Math.Between(20, 40),
+                    Phaser.Math.Between(20, 40),
+                    Phaser.Utils.Array.GetRandom([0xCCCCCC, 0xFFFFFF, 0xE0E0E0]),
+                    0.4
+                );
+                chaos.angle = Phaser.Math.Between(-30, 30);
+                chaosElements.add(chaos);
+            }
+
+            // Clean elements (organized, digital)
+            for(let i = 0; i < 20; i++) {
+                const clean = scene.add.circle(
+                    Phaser.Math.Between(0, 1200),
+                    Phaser.Math.Between(0, 700),
+                    Phaser.Math.Between(3, 8),
+                    0x6DD4C8,
+                    0
+                );
+                cleanElements.add(clean);
+                
+                const line = scene.add.line(0, 0,
+                    Phaser.Math.Between(0, 1200), Phaser.Math.Between(0, 700),
+                    Phaser.Math.Between(0, 1200), Phaser.Math.Between(0, 700),
+                    0x6DD4C8, 0
+                ).setLineWidth(1);
+                cleanElements.add(line);
+            }
+        }
+
+        function showWelcome(scene) {
+            const bg = scene.add.rectangle(600, 350, 1200, 700, 0x000000, 0.9).setDepth(999);
+            const title = scene.add.text(600, 180, 'CLEAR THE CHAOS!', {
+                fontSize: '64px', fill: '#6DD4C8', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 8
+            }).setOrigin(0.5).setDepth(1000);
+            
+            const subtitle = scene.add.text(600, 260, "Natalie's Automation Quest", {
+                fontSize: '28px', fill: '#FFD700', fontStyle: 'italic',
+                stroke: '#000', strokeThickness: 5
+            }).setOrigin(0.5).setDepth(1000);
+            
+            const story = scene.add.text(600, 340,
+                '✨ COLLECT emails, tasks & documents to automate them!\n' +
+                '🚫 AVOID only the red bugs and errors!\n' +
+                '🌟 Watch chaos transform into beautiful automation!',
+            {
+                fontSize: '20px', fill: '#FFF', align: 'center', lineSpacing: 12
+            }).setOrigin(0.5).setDepth(1000);
+            
+            const tip = scene.add.text(600, 450,
+                'Remember: Collecting = Good! The more you collect, the clearer it gets! 💚',
+            {
+                fontSize: '18px', fill: '#27AE60', align: 'center', fontStyle: 'italic'
+            }).setOrigin(0.5).setDepth(1000);
+            
+            const start = scene.add.text(600, 520, 'Press ANY KEY to Start Clearing!', {
+                fontSize: '28px', fill: '#FFD700', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 5
+            }).setOrigin(0.5).setDepth(1000);
+            
+            scene.tweens.add({ targets: start, alpha: 0.3, duration: 600, yoyo: true, repeat: -1 });
+            
+            scene.input.keyboard.once('keydown', () => {
+                [bg, title, subtitle, story, tip, start].forEach(e => e.destroy());
+                playWhoosh();
+                showMsg(scene, 'Phase 1: Clear the Office! 📋', 2500);
+            });
+        }
+
+        function update(time, delta) {
+            if (gameOver) return;
+
+            // Animate Natalie
+            animateNatalie(this, time, delta);
+
+            // Move background
+            animateEnvironment(delta);
+
+            // Update chaos level based on items cleared
+            chaosLevel = Math.max(0, 100 - (itemsCleared * 2));
+            
+            // Phase transitions based on chaos cleared
+            if (chaosLevel < 70 && phase === 1) {
+                phase = 2;
+                phaseText.setText('Phase 2: Digital Transform! 💎');
+                showMsg(this, '✨ The chaos is clearing! Keep going!', 2500);
+                playTransform();
+            } else if (chaosLevel < 30 && phase === 2) {
+                phase = 3;
+                phaseText.setText('Phase 3: Full Automation! 🚀');
+                showMsg(this, '🌟 Almost there! Beautiful automation ahead!', 2500);
+                playTransform();
+            }
+
+            // Spawn elements
+            spawnElements(this, delta);
+
+            // Move elements
+            moveElements(delta);
+
+            // Update power-ups
+            updatePowerUps(this, delta);
+
+            // Score
+            scoreText.setText(`Score: ${Math.floor(score)}`);
+            clearedText.setText(`Cleared: ${itemsCleared}`);
+            gameSpeed = Math.min(400, 200 + itemsCleared * 2);
+        }
+
+        function animateNatalie(scene, time, delta) {
+            const speed = speedBoost ? 600 : 400;
+            let moving = false;
+            player.setVelocity(0);
+
+            if (cursors.left.isDown || keys.A.isDown) {
+                player.setVelocityX(-speed);
+                player.angle = Phaser.Math.Linear(player.angle, -12, 0.1);
+                moving = true;
+            } else if (cursors.right.isDown || keys.D.isDown) {
+                player.setVelocityX(speed);
+                player.angle = Phaser.Math.Linear(player.angle, 12, 0.1);
+                moving = true;
+            } else {
+                player.angle = Phaser.Math.Linear(player.angle, 0, 0.12);
+            }
+
+            if (cursors.up.isDown || keys.W.isDown) {
+                player.setVelocityY(-speed);
+                moving = true;
+            } else if (cursors.down.isDown || keys.S.isDown) {
+                player.setVelocityY(speed);
+                moving = true;
+            }
+
+            // Whoosh sound when moving fast
+            if (moving && time - lastWhoosh > 800) {
+                playWhoosh();
+                lastWhoosh = time;
+            }
+
+            // Gentle bobbing when idle
+            if (!moving) {
+                player.y += Math.sin(time / 300) * 0.4;
+            }
+
+            // ANIMATE CAPE - flows behind!
+            if (capeSprite) {
+                // Position cape behind player
+                const capeOffsetX = -15 + (player.angle * 0.5);
+                const capeOffsetY = 15;
+                capeSprite.x = player.x + capeOffsetX;
+                capeSprite.y = player.y + capeOffsetY;
+                
+                // Cape waves based on movement
+                const velocity = Math.abs(player.body.velocity.x) + Math.abs(player.body.velocity.y);
+                const waveIntensity = velocity / 100;
+                capeSprite.angle = player.angle + Math.sin(time / 150) * (5 + waveIntensity);
+                capeSprite.scaleY = 1.2 + Math.sin(time / 200) * 0.1;
+            }
+
+            // Update emblem position
+            if (emblemText) {
+                emblemText.x = player.x;
+                emblemText.y = player.y + 8;
+                emblemText.angle = player.angle;
+            }
+
+            // Update aura
+            if (aura) {
+                aura.x = player.x;
+                aura.y = player.y;
+            }
+        }
+
+        function animateEnvironment(delta) {
+            const speed = gameSpeed * delta / 1000;
+
+            // Chaos fades as you clear items
+            chaosElements.children.entries.forEach(elem => {
+                elem.x -= speed * 0.4;
+                if (elem.x < -50) {
+                    elem.x = 1250;
+                    elem.y = Phaser.Math.Between(0, 700);
+                }
+                elem.alpha = chaosLevel / 100 * 0.4;
+            });
+
+            // Clean elements appear as chaos clears
+            cleanElements.children.entries.forEach(elem => {
+                elem.x -= speed * 0.6;
+                if (elem.x < -50) {
+                    elem.x = 1250;
+                    elem.y = Phaser.Math.Between(0, 700);
+                }
+                elem.alpha = (100 - chaosLevel) / 100 * 0.4;
+            });
+        }
+
+        function spawnElements(scene, delta) {
+            collectTimer += delta;
+            dangerTimer += delta;
+            powerupTimer += delta;
+
+            // Spawn collectibles (frequently!)
+            if (collectTimer > Math.max(400, 1000 - itemsCleared * 5)) {
+                const type = Phaser.Utils.Array.GetRandom(['email', 'task', 'document']);
+                const y = Phaser.Math.Between(80, 620);
+                const item = collectibles.create(1200, y, type).setScale(1.3);
+                item.itemType = type;
+                
+                // Sparkle effect
+                scene.tweens.add({
+                    targets: item,
+                    scale: 1.5,
+                    duration: 500,
+                    yoyo: true,
+                    repeat: -1
+                });
+                
+                // Glow
+                const glow = scene.add.circle(item.x, item.y, 25, 0x6DD4C8, 0.3);
+                item.glow = glow;
+                scene.tweens.add({
+                    targets: glow,
+                    scale: 1.3,
+                    alpha: 0,
+                    duration: 800,
+                    repeat: -1
+                });
+                
+                collectTimer = 0;
+            }
+
+            // Spawn dangers (less frequently)
+            if (dangerTimer > 2500) {
+                const y = Phaser.Math.Between(80, 620);
+                const danger = dangers.create(1200, y, 'bug').setScale(1.4);
+                
+                // Pulsing warning
+                scene.tweens.add({
+                    targets: danger,
+                    scale: 1.7,
+                    duration: 400,
+                    yoyo: true,
+                    repeat: -1
+                });
+                
+                dangerTimer = 0;
+            }
+
+            // Spawn power-ups
+            if (powerupTimer > 6000) {
+                const type = Phaser.Utils.Array.GetRandom(['hands', 'gear', 'aibot']);
+                const y = Phaser.Math.Between(100, 600);
+                const pw = powerups.create(1200, y, type).setScale(1.5);
+                pw.powerType = type;
+                
+                // Golden glow
+                const glow = scene.add.circle(pw.x, pw.y, 35, 0xFFD700, 0.3);
+                pw.glow = glow;
+                scene.tweens.add({
+                    targets: [pw, glow],
+                    scale: pw.scale * 1.2,
+                    duration: 600,
+                    yoyo: true,
+                    repeat: -1
+                });
+                
+                powerupTimer = 0;
+            }
+        }
+
+        function moveElements(delta) {
+            const speed = gameSpeed * delta / 1000;
+
+            collectibles.children.entries.forEach(item => {
+                item.x -= speed;
+                if (item.glow) item.glow.x = item.x;
+                if (item.x < -50) {
+                    if (item.glow) item.glow.destroy();
+                    item.destroy();
+                }
+            });
+
+            dangers.children.entries.forEach(danger => {
+                danger.x -= speed * 1.2;
+                danger.rotation += 0.05;
+                if (danger.x < -50) danger.destroy();
+            });
+
+            powerups.children.entries.forEach(pw => {
+                pw.x -= speed * 0.7;
+                if (pw.glow) pw.glow.x = pw.x;
+                if (pw.x < -50) {
+                    if (pw.glow) pw.glow.destroy();
+                    pw.destroy();
+                }
+            });
+        }
+
+        function updatePowerUps(scene, delta) {
+            if (extraHandsActive) {
+                extraHandsTimer -= delta;
+                if (extraHandsTimer <= 0) {
+                    extraHandsActive = false;
+                    aura.setFillStyle(0x6DD4C8, 0);
+                }
+
+                // Auto-collect nearby items
+                collectibles.children.entries.forEach(item => {
+                    const dist = Phaser.Math.Distance.Between(player.x, player.y, item.x, item.y);
+                    if (dist < 200) {
+                        scene.tweens.add({
+                            targets: item,
+                            x: player.x,
+                            y: player.y,
+                            duration: 200,
+                            onComplete: () => collectItem(player, item, scene)
+                        });
+                        if (item.glow) {
+                            scene.tweens.add({
+                                targets: item.glow,
+                                x: player.x,
+                                y: player.y,
+                                duration: 200,
+                                onComplete: () => item.glow.destroy()
+                            });
+                        }
+                    }
+                });
+            }
+
+            if (aiBotActive && aiBot) {
+                aiBot.x = Phaser.Math.Linear(aiBot.x, player.x - 70, 0.15);
+                aiBot.y = Phaser.Math.Linear(aiBot.y, player.y, 0.15);
+
+                dangers.children.entries.forEach(danger => {
+                    const dist = Phaser.Math.Distance.Between(aiBot.x, aiBot.y, danger.x, danger.y);
+                    if (dist < 80) {
+                        sparkle(scene, danger.x, danger.y, 0xFFD700);
+                        danger.destroy();
+                        score += 50;
+                        playCollect();
+                    }
+                });
+            }
+        }
+
+        function collectItem(player, item, scene) {
+            if (!scene) scene = this;
+            
+            playCollect(); // Happy ding-ding-DING!
+            
+            // Sparkle effect
+            sparkle(scene, item.x, item.y, 0x6DD4C8);
+            
+            if (item.glow) item.glow.destroy();
+            item.destroy();
+
+            score += 25;
+            itemsCleared++;
+            
+            // Encouraging messages
+            if (itemsCleared % 10 === 0) {
+                showMsg(scene, `${itemsCleared} Items Cleared! 🌟`, 1200);
+            }
+            if (itemsCleared % 25 === 0) {
+                showMsg(scene, 'Amazing Progress! Keep Automating! ✨', 1800);
+                playVictory();
+            }
+        }
+
+        function hitDanger(player, danger) {
+            if (extraHandsActive) {
+                // Extra Hands shields you!
+                sparkle(this, danger.x, danger.y, 0xFFD700);
+                danger.destroy();
+                score += 30;
+                return;
+            }
+
+            playBonk(); // Soft bonk, not harsh!
+            gameOver = true;
+
+            if (Math.floor(score) > highScore) {
+                highScore = Math.floor(score);
+                localStorage.setItem('clearChaosHS', highScore);
+                playVictory();
+            }
+
+            // Red flash
+            player.setTint(0xff6b6b);
+            player.setVelocity(0);
+            capeSprite.setTint(0xff6b6b);
+
+            showGameOver(this);
+        }
+
+        function getPowerUp(player, pw) {
+            playPowerUp(); // Magical sparkle!
+            
+            sparkle(this, pw.x, pw.y, 0xFFD700);
+            
+            if (pw.glow) pw.glow.destroy();
+            pw.destroy();
+
+            score += 100;
+
+            if (pw.powerType === 'hands') {
+                extraHandsActive = true;
+                extraHandsTimer = 6000;
+                aura.setFillStyle(0xFFD700, 0.3);
+                showMsg(this, '✋ EXTRA HANDS! Auto-collecting! ✋', 2000);
+                playExtraHands();
+            } else if (pw.powerType === 'gear') {
+                speedBoost = true;
+                player.setTint(0xFFD700);
+                showMsg(this, '⚙️ Speed Boost Active!', 2000);
+                this.time.delayedCall(5000, () => {
+                    speedBoost = false;
+                    if (!extraHandsActive) player.clearTint();
+                });
+            } else if (pw.powerType === 'aibot') {
+                if (aiBot) aiBot.destroy();
+                aiBotActive = true;
+                aiBot = this.add.sprite(player.x - 70, player.y, 'aibot').setScale(1.8).setDepth(101);
+                this.tweens.add({ targets: aiBot, y: aiBot.y - 10, duration: 600, yoyo: true, repeat: -1 });
+                showMsg(this, '🤖 AI Helper Clearing Bugs!', 2000);
+                this.time.delayedCall(7000, () => {
+                    aiBotActive = false;
+                    if (aiBot) {
+                        this.tweens.add({
+                            targets: aiBot,
+                            alpha: 0,
+                            duration: 400,
+                            onComplete: () => aiBot.destroy()
+                        });
+                    }
+                });
+            }
+        }
+
+        function sparkle(scene, x, y, color) {
+            const p = scene.add.particles(x, y, 'email', {
+                speed: { min: 50, max: 200 },
+                scale: { start: 0.4, end: 0 },
+                tint: color,
+                lifespan: 500,
+                quantity: 12,
+                blendMode: 'ADD'
+            });
+            scene.time.delayedCall(500, () => p.destroy());
+        }
+
+        function showMsg(scene, text, dur) {
+            messageText.setText(text).setAlpha(1);
+            scene.tweens.add({ targets: messageText, alpha: 0, duration: dur, delay: dur * 0.6 });
+        }
+
+        function showGameOver(scene) {
+            const bg = scene.add.rectangle(600, 350, 1200, 700, 0x000000, 0.9).setDepth(999);
+            const title = scene.add.text(600, 220, 'AUTOMATION COMPLETE!', {
+                fontSize: '56px', fill: '#6DD4C8', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 8
+            }).setOrigin(0.5).setDepth(1000);
+            
+            const cleared = scene.add.text(600, 300, `You Cleared ${itemsCleared} Items!`, {
+                fontSize: '32px', fill: '#27AE60', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 5
+            }).setOrigin(0.5).setDepth(1000);
+            
+            const final = scene.add.text(600, 360, `Final Score: ${Math.floor(score)}`, {
+                fontSize: '28px', fill: '#FFD700', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 4
+            }).setOrigin(0.5).setDepth(1000);
+            
+            let status;
+            if (Math.floor(score) > highScore - Math.floor(score)) {
+                status = scene.add.text(600, 420, '🏆 NEW HIGH SCORE! 🏆', {
+                    fontSize: '36px', fill: '#FFD700', fontStyle: 'bold',
+                    stroke: '#000', strokeThickness: 6
+                }).setOrigin(0.5).setDepth(1000);
+            } else {
+                status = scene.add.text(600, 420, `High Score: ${highScore}`, {
+                    fontSize: '24px', fill: '#FFD700', fontStyle: 'bold',
+                    stroke: '#000', strokeThickness: 4
+                }).setOrigin(0.5).setDepth(1000);
+            }
+            
+            const restart = scene.add.text(600, 520, 'Press SPACE to Clear More Chaos!', {
+                fontSize: '26px', fill: '#6DD4C8', fontStyle: 'bold',
+                stroke: '#000', strokeThickness: 5
+            }).setOrigin(0.5).setDepth(1000);
+            
+            scene.tweens.add({ targets: restart, alpha: 0.4, duration: 600, yoyo: true, repeat: -1 });
+            
+            scene.input.keyboard.once('keydown-SPACE', () => {
+                scene.scene.restart();
+                score = 0;
+                itemsCleared = 0;
+                chaosLevel = 100;
+                gameOver = false;
+                gameSpeed = 200;
+                extraHandsActive = false;
+                speedBoost = false;
+                aiBotActive = false;
+                phase = 1;
+            });
+        }
+    </script>
+</body>
+</html>
