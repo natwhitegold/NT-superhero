@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Natalie's Superhero - Mobile Optimized! 🚀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .hero-banner {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            background: radial-gradient(ellipse at center, #0a0a20 0%, #000000 100%);
+            overflow: hidden;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* Starfield background - optimized for mobile */
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 70%, white, transparent);
+            background-size: 200% 200%;
+            animation: starTwinkle 8s ease-in-out infinite;
+            opacity: 0.5;
+        }
+        
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.5; background-position: 0% 0%; }
+            50% { opacity: 0.8; background-position: 100% 100%; }
+        }
+        
+        /* Simplified nebula for mobile performance */
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.2;
+            animation: nebulaFloat 15s ease-in-out infinite;
+        }
+        
+        @keyframes nebulaFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+            50% { transform: translate(20px, -20px) scale(1.1); opacity: 0.35; }
+        }
+        
+        .nebula.cyan {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.3) 0%, transparent 70%);
+            right: -50px;
+            top: 100px;
+        }
+        
+        .nebula.magenta {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(255, 0, 127, 0.3) 0%, transparent 70%);
+            left: -50px;
+            bottom: 150px;
+            animation-delay: 5s;
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .tagline {
+            font-size: 0.75rem;
+            color: #FF007F;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(255, 0, 127, 0.8);
+            animation: taglinePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes taglinePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            line-height: 1.2;
+            margin-bottom: 25px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFFFFF 0%, #00FFFF 30%, #FF007F 60%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: titleShimmer 3s linear infinite;
+            padding: 0 10px;
+        }
+        
+        @keyframes titleShimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #00FFFF;
+            font-weight: 600;
+            margin-bottom: 35px;
+            line-height: 1.5;
+            text-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+            padding: 0 15px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #FF007F 0%, #FF1493 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 25px rgba(255, 0, 127, 0.5);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            min-width: 260px;
+            text-align: center;
+            margin-top: 40px;
+            /* Touch-friendly sizing */
+            min-height: 48px;
+        }
+        
+        .cta-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 15px rgba(255, 0, 127, 0.6);
+        }
+        
+        /* Animated CTA text */
+        .cta-text {
+            display: block;
+            position: relative;
+            height: 1.2em;
+        }
+        
+        .cta-text span {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            text-align: center;
+            white-space: nowrap;
+            opacity: 0;
+            animation: ctaFade 8s ease-in-out infinite;
+        }
+        
+        .cta-text span:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .cta-text span:nth-child(2) {
+            animation-delay: 4s;
+        }
+        
+        @keyframes ctaFade {
+            0% { opacity: 0; transform: translateY(10px); }
+            5% { opacity: 1; transform: translateY(0); }
+            45% { opacity: 1; transform: translateY(0); }
+            50% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+        
+        /* MOBILE-OPTIMIZED SUPERHERO */
+        .superhero {
+            position: absolute;
+            left: 50%;
+            top: 20%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 105px;
+            z-index: 100;
+            animation: heroFlightPathMobile 14s ease-in-out 3s infinite;
+            cursor: pointer;
+        }
+        
+        .superhero.paused {
+            animation-play-state: paused !important;
+        }
+        
+        @keyframes heroFlightPathMobile {
+            0% { 
+                left: 50%; 
+                top: 20%; 
+                transform: translate(-50%, -50%) rotate(0deg) scale(1);
+                filter: brightness(1);
+            }
+            20% { 
+                left: 15%; 
+                top: 25%; 
+                transform: translate(-50%, -50%) rotate(-35deg) scale(0.8);
+                filter: brightness(1.3);
+            }
+            50% { 
+                left: 85%; 
+                top: 15%; 
+                transform: translate(-50%, -50%) rotate(35deg) scale(0.85);
+                filter: brightness(1.4);
+            }
+            70% { 
+                left: 50%; 
+                top: 70%; 
+                transform: translate(-50%, -50%) rotate(180deg) scale(0.75);
+                filter: brightness(1.2);
+            }
+            90% { 
+                left: 70%; 
+                top: 35%; 
+                transform: translate(-50%, -50%) rotate(270deg) scale(0.85);
+                filter: brightness(1.1);
+            }
+            100% { 
+                left: 50%; 
+                top: 20%; 
+                transform: translate(-50%, -50%) rotate(360deg) scale(1);
+                filter: brightness(1);
+            }
+        }
+        
+        /* Touch hint for mobile */
+        .costume-hint {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: #FFD700;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 150;
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+        
+        .superhero.touched .costume-hint {
+            opacity: 1;
+            top: -45px;
+        }
+        
+        /* Superhero parts - scaled for mobile */
+        .superhero-cape {
+            position: absolute;
+            left: 11px;
+            top: 26px;
+            width: 38px;
+            height: 53px;
+            background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+            border-radius: 4px 4px 20px 20px;
+            z-index: 1;
+            transform-origin: top center;
+            animation: capeWave 1.5s ease-in-out infinite;
+            clip-path: polygon(0% 0%, 100% 0%, 95% 20%, 100% 40%, 90% 60%, 95% 80%, 85% 100%, 50% 95%, 15% 100%, 5% 80%, 10% 60%, 0% 40%, 5% 20%);
+            transition: background 0.3s ease;
+        }
+        
+        @keyframes capeWave {
+            0%, 100% { 
+                transform: rotateZ(-5deg) scaleY(1);
+                clip-path: polygon(0% 0%, 100% 0%, 95% 20%, 100% 40%, 90% 60%, 95% 80%, 85% 100%, 50% 95%, 15% 100%, 5% 80%, 10% 60%, 0% 40%, 5% 20%);
+            }
+            25% { 
+                transform: rotateZ(3deg) scaleY(1.1);
+                clip-path: polygon(0% 0%, 100% 0%, 100% 20%, 95% 40%, 100% 60%, 90% 80%, 95% 100%, 50% 95%, 5% 100%, 10% 80%, 0% 60%, 5% 40%, 0% 20%);
+            }
+            50% { 
+                transform: rotateZ(-3deg) scaleY(1.05);
+                clip-path: polygon(0% 0%, 100% 0%, 90% 20%, 95% 40%, 85% 60%, 90% 80%, 80% 100%, 50% 98%, 20% 100%, 10% 80%, 15% 60%, 5% 40%, 10% 20%);
+            }
+            75% { 
+                transform: rotateZ(2deg) scaleY(1.08);
+                clip-path: polygon(0% 0%, 100% 0%, 98% 20%, 100% 40%, 95% 60%, 98% 80%, 90% 100%, 50% 93%, 10% 100%, 2% 80%, 5% 60%, 0% 40%, 2% 20%);
+            }
+        }
+        
+        .superhero-hair {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            width: 30px;
+            height: 23px;
+            background: #4a2c0f;
+            border-radius: 50% 50% 0 0;
+            z-index: 3;
+        }
+        
+        .superhero-head {
+            position: absolute;
+            left: 19px;
+            top: 19px;
+            width: 23px;
+            height: 26px;
+            background: #FFDAB9;
+            border-radius: 50%;
+            z-index: 4;
+        }
+        
+        .superhero-tiara {
+            position: absolute;
+            left: 17px;
+            top: 23px;
+            width: 27px;
+            height: 6px;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 8px 8px 0 0;
+            z-index: 5;
+            box-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
+        }
+        
+        .superhero-star {
+            position: absolute;
+            left: 28px;
+            top: 20px;
+            width: 6px;
+            height: 6px;
+            background: #FFD700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            z-index: 6;
+            animation: starShine 2s ease-in-out infinite;
+        }
+        
+        @keyframes starShine {
+            0%, 100% { filter: brightness(1); transform: scale(1); }
+            50% { filter: brightness(1.5); transform: scale(1.2); }
+        }
+        
+        .superhero-body {
+            position: absolute;
+            left: 19px;
+            top: 41px;
+            width: 23px;
+            height: 30px;
+            background: linear-gradient(135deg, #DC143C 0%, #B22222 100%);
+            border-radius: 4px;
+            z-index: 4;
+            transition: background 0.3s ease;
+        }
+        
+        .superhero-belt {
+            position: absolute;
+            left: 17px;
+            top: 68px;
+            width: 26px;
+            height: 6px;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            z-index: 5;
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.6);
+            transition: background 0.3s ease;
+        }
+        
+        .superhero-shorts {
+            position: absolute;
+            left: 20px;
+            top: 72px;
+            width: 20px;
+            height: 14px;
+            background: #000080;
+            border-radius: 0 0 2px 2px;
+            z-index: 4;
+            transition: background 0.3s ease;
+        }
+        
+        .superhero-emblem {
+            position: absolute;
+            left: 26px;
+            top: 50px;
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 2px;
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 12px;
+            color: #DC143C;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease;
+        }
+        
+        .superhero-emblem::before {
+            content: 'N';
+            animation: emblemGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes emblemGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        
+        .superhero-arm-back {
+            position: absolute;
+            left: 14px;
+            top: 44px;
+            width: 6px;
+            height: 19px;
+            background: #FFDAB9;
+            border-radius: 3px;
+            z-index: 3;
+            transform: rotate(-15deg);
+        }
+        
+        .superhero-arm-forward {
+            position: absolute;
+            left: 41px;
+            top: 41px;
+            width: 6px;
+            height: 23px;
+            background: #FFDAB9;
+            border-radius: 3px;
+            z-index: 5;
+            transform: rotate(45deg);
+        }
+        
+        .superhero-fist {
+            position: absolute;
+            left: 46px;
+            top: 36px;
+            width: 8px;
+            height: 8px;
+            background: #FFDAB9;
+            border-radius: 50%;
+            z-index: 6;
+            box-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+        }
+        
+        .energy-beam {
+            position: absolute;
+            left: 50px;
+            top: 38px;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 1) 0%, rgba(0, 255, 255, 0.8) 50%, transparent 100%);
+            border-radius: 2px;
+            z-index: 5;
+            animation: beamPulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+            filter: blur(0.5px);
+        }
+        
+        @keyframes beamPulse {
+            0%, 100% { opacity: 0.6; width: 30px; }
+            50% { opacity: 1; width: 42px; }
+        }
+        
+        .superhero-legs {
+            position: absolute;
+            left: 23px;
+            top: 83px;
+            width: 6px;
+            height: 17px;
+            background: #FFDAB9;
+            border-radius: 3px;
+            z-index: 3;
+        }
+        
+        .superhero-leg2 {
+            position: absolute;
+            left: 32px;
+            top: 83px;
+            width: 6px;
+            height: 17px;
+            background: #FFDAB9;
+            border-radius: 3px;
+            z-index: 3;
+        }
+        
+        .superhero-boot1 {
+            position: absolute;
+            left: 21px;
+            top: 97px;
+            width: 9px;
+            height: 8px;
+            background: #DC143C;
+            border-radius: 2px;
+            z-index: 3;
+        }
+        
+        .superhero-boot2 {
+            position: absolute;
+            left: 30px;
+            top: 97px;
+            width: 9px;
+            height: 8px;
+            background: #DC143C;
+            border-radius: 2px;
+            z-index: 3;
+        }
+        
+        .superhero::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(15px);
+            opacity: 0;
+            animation: speedTrail 14s ease-in-out 3s infinite;
+            z-index: 0;
+        }
+        
+        @keyframes speedTrail {
+            0%, 18%, 100% { opacity: 0; transform: scale(1); }
+            20%, 70% { opacity: 0.7; transform: scale(2); }
+        }
+        
+        /* Mobile-optimized flight trails */
+        .flight-trail {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #FFD700;
+            z-index: 99;
+            opacity: 0;
+            animation: trailFade 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes trailFade {
+            0% { opacity: 1; transform: scale(1); filter: brightness(1.5); }
+            100% { opacity: 0; transform: scale(0.2); filter: brightness(0.5); }
+        }
+        
+        /* Simplified speed lines for mobile */
+        .speed-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 95;
+            pointer-events: none;
+            opacity: 0;
+            animation: speedLinesAppear 14s ease-in-out 3s infinite;
+        }
+        
+        @keyframes speedLinesAppear {
+            0%, 18%, 52%, 100% { opacity: 0; }
+            20%, 50% { opacity: 0.8; }
+        }
+        
+        .speed-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.6) 50%, transparent 100%);
+            animation: speedLineMove 0.8s linear infinite;
+        }
+        
+        .speed-line:nth-child(1) { top: 20%; left: 0; width: 150px; animation-delay: 0s; }
+        .speed-line:nth-child(2) { top: 35%; left: 5%; width: 120px; animation-delay: 0.15s; }
+        .speed-line:nth-child(3) { top: 50%; left: 0; width: 140px; animation-delay: 0.3s; }
+        .speed-line:nth-child(4) { top: 65%; left: 8%; width: 130px; animation-delay: 0.2s; }
+        
+        @keyframes speedLineMove {
+            0% { transform: translateX(0); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateX(400px); opacity: 0; }
+        }
+        
+        /* WHOOSH text - mobile sized */
+        .whoosh-text {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: 900;
+            font-style: italic;
+            color: #FFD700;
+            text-shadow: 
+                0 0 15px rgba(255, 215, 0, 0.8),
+                0 0 30px rgba(0, 255, 255, 0.6),
+                2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 96;
+            opacity: 0;
+            pointer-events: none;
+            animation: whooshAppear 14s ease-in-out 3s infinite;
+        }
+        
+        @keyframes whooshAppear {
+            0%, 18%, 22%, 48%, 52%, 100% { 
+                opacity: 0; 
+                transform: scale(0.5) rotate(-10deg);
+            }
+            20% { 
+                opacity: 1; 
+                transform: scale(1) rotate(-5deg);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+        
+        /* Tablet breakpoint */
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .superhero {
+                width: 70px;
+                height: 122px;
+            }
+        }
+        
+        /* Small phone optimization */
+        @media (max-width: 375px) {
+            h1 {
+                font-size: 1.9rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .tagline {
+                font-size: 0.7rem;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-banner" id="heroBanner">
+        <!-- Nebula clouds -->
+        <div class="nebula cyan"></div>
+        <div class="nebula magenta"></div>
+        
+        <!-- Content -->
+        <div class="content-wrapper">
+            <div class="tagline">NURTURE & TRANSFORM</div>
+            <h1>Automation that gives lean teams superpowers</h1>
+            <p class="subtitle">We automate the routine giving you the extra hands you need, without the hires.</p>
+            <a href="#" class="cta-button">
+                <span class="cta-text">
+                    <span>See What's Possible</span>
+                    <span>Get Your Superpowers</span>
+                </span>
+            </a>
+        </div>
+        
+        <!-- SUPERHERO -->
+        <div class="superhero" id="superhero">
+            <div class="costume-hint">👆 Tap to change costume!</div>
+            <div class="superhero-cape"></div>
+            <div class="superhero-hair"></div>
+            <div class="superhero-arm-back"></div>
+            <div class="superhero-body"></div>
+            <div class="superhero-belt"></div>
+            <div class="superhero-shorts"></div>
+            <div class="superhero-emblem"></div>
+            <div class="superhero-legs"></div>
+            <div class="superhero-leg2"></div>
+            <div class="superhero-boot1"></div>
+            <div class="superhero-boot2"></div>
+            <div class="superhero-head"></div>
+            <div class="superhero-tiara"></div>
+            <div class="superhero-star"></div>
+            <div class="superhero-arm-forward"></div>
+            <div class="superhero-fist"></div>
+            <div class="energy-beam"></div>
+        </div>
+        
+        <!-- Speed lines -->
+        <div class="speed-lines">
+            <div class="speed-line"></div>
+            <div class="speed-line"></div>
+            <div class="speed-line"></div>
+            <div class="speed-line"></div>
+        </div>
+        
+        <!-- WHOOSH effects -->
+        <div class="whoosh-text" style="left: 15%; top: 30%;">WHOOSH!</div>
+        <div class="whoosh-text" style="right: 10%; top: 20%; animation-delay: 4s;">ZOOM!</div>
+    </div>
+    
+    <script>
+        // WEB AUDIO API - Sound effects
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        
+        // Initialize audio context on first user interaction (required by mobile browsers)
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+        
+        function playWhoosh() {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(2000, audioCtx.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.5);
+            
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            
+            oscillator.type = 'sawtooth';
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        }
+        
+        function playZap() {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+            
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            
+            oscillator.type = 'square';
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.15);
+        }
+        
+        function playPowerUp() {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.3);
+            
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            
+            oscillator.type = 'sine';
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        }
+        
+        // Start whoosh sounds after flight begins
+        setTimeout(() => {
+            initAudio();
+            playWhoosh();
+            setTimeout(() => playWhoosh(), 4200);
+        }, 3000);
+        
+        setInterval(() => {
+            playWhoosh();
+            setTimeout(() => playWhoosh(), 4200);
+        }, 14000);
+        
+        // TOUCH INTERACTIONS
+        const hero = document.getElementById('superhero');
+        const banner = document.getElementById('heroBanner');
+        let costumeState = 0;
+        let isPaused = false;
+        let touchHintTimeout;
+        
+        // Touch/Click handler for costume change
+        hero.addEventListener('touchstart', handleTouch, { passive: false });
+        hero.addEventListener('click', handleTouch);
+        
+        function handleTouch(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            initAudio();
+            
+            costumeState = (costumeState + 1) % 3;
+            
+            const body = hero.querySelector('.superhero-body');
+            const cape = hero.querySelector('.superhero-cape');
+            const shorts = hero.querySelector('.superhero-shorts');
+            const belt = hero.querySelector('.superhero-belt');
+            const emblem = hero.querySelector('.superhero-emblem');
+            
+            playZap();
+            
+            // Show hint briefly on touch
+            hero.classList.add('touched');
+            clearTimeout(touchHintTimeout);
+            touchHintTimeout = setTimeout(() => {
+                hero.classList.remove('touched');
+            }, 2000);
+            
+            // Costume variants
+            if (costumeState === 0) {
+                body.style.background = 'linear-gradient(135deg, #DC143C 0%, #B22222 100%)';
+                cape.style.background = 'linear-gradient(135deg, #DC143C 0%, #8B0000 100%)';
+                shorts.style.background = '#000080';
+                belt.style.background = 'linear-gradient(90deg, #FFD700 0%, #FFA500 100%)';
+                emblem.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+            } else if (costumeState === 1) {
+                body.style.background = 'linear-gradient(135deg, #00FFFF 0%, #0099CC 100%)';
+                cape.style.background = 'linear-gradient(135deg, #FF007F 0%, #CC0066 100%)';
+                shorts.style.background = '#FFD700';
+                belt.style.background = 'linear-gradient(90deg, #00FFFF 0%, #0099CC 100%)';
+                emblem.style.background = 'linear-gradient(135deg, #FF007F 0%, #CC0066 100%)';
+            } else {
+                body.style.background = 'linear-gradient(135deg, #FF007F 0%, #CC0066 100%)';
+                cape.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+                shorts.style.background = '#00FFFF';
+                belt.style.background = 'linear-gradient(90deg, #FF007F 0%, #CC0066 100%)';
+                emblem.style.background = 'linear-gradient(135deg, #00FFFF 0%, #0099CC 100%)';
+            }
+            
+            hero.style.filter = 'brightness(2.5) drop-shadow(0 0 50px currentColor)';
+            setTimeout(() => {
+                hero.style.filter = '';
+            }, 200);
+        }
+        
+        // Long press to pause (mobile equivalent of hover)
+        let pressTimer;
+        
+        hero.addEventListener('touchstart', (e) => {
+            pressTimer = setTimeout(() => {
+                hero.classList.add('paused');
+                isPaused = true;
+                playPowerUp();
+                navigator.vibrate && navigator.vibrate(50); // Haptic feedback if available
+            }, 500);
+        }, { passive: true });
+        
+        hero.addEventListener('touchend', () => {
+            clearTimeout(pressTimer);
+            if (isPaused) {
+                hero.classList.remove('paused');
+                isPaused = false;
+            }
+        }, { passive: true });
+        
+        // Optimized flight trail for mobile (less frequent)
+        setInterval(() => {
+            if (!isPaused) {
+                const rect = hero.getBoundingClientRect();
+                const bannerRect = banner.getBoundingClientRect();
+                
+                const trail = document.createElement('div');
+                trail.className = 'flight-trail';
+                trail.style.left = (rect.left - bannerRect.left + rect.width / 2) + 'px';
+                trail.style.top = (rect.top - bannerRect.top + rect.height / 2) + 'px';
+                
+                const colors = ['#FFD700', '#00FFFF', '#FF007F'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                trail.style.background = randomColor;
+                trail.style.boxShadow = `0 0 8px ${randomColor}`;
+                
+                banner.appendChild(trail);
+                
+                setTimeout(() => trail.remove(), 600);
+            }
+        }, 150); // Less frequent than desktop for performance
+    </script>
+</body>
+</html>
