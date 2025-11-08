@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natalie's Automation Quest 🦸‍♀️</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a20 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        #game-container {
+            box-shadow: 0 0 50px rgba(217, 28, 92, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 300px;
+            border: 2px solid #D91C5C;
+        }
+        
+        .info h3 {
+            color: #D91C5C;
+            margin-bottom: 10px;
+        }
+        
+        .info p {
+            margin: 5px 0;
+            color: #6DD4C8;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h3>🎮 Controls</h3>
+        <p>⬆️⬇️⬅️➡️ Arrow Keys to Move</p>
+        <p>OR W/A/S/D</p>
+        <p>🎯 Collect Golden Gears</p>
+        <p>❌ Avoid Red Bugs</p>
+        <p>🏆 Beat Your High Score!</p>
+    </div>
+    <div id="game-container"></div>
+
+    <script>
+        // Web Audio API for sound effects
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playCollectSound() {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            
+            oscillator.type = 'sine';
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function playCrashSound() {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+            
+            gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            
+            oscillator.type = 'sawtooth';
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        }
+
+        function playWhooshSound() {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.2);
+            
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            
+            oscillator.type = 'sawtooth';
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.2);
+        }
+
+        // Game configuration
+        const config = {
+            type: Phaser.AUTO,
+            width: 1000,
+            height: 600,
+            parent: 'game-container',
+            backgroundColor: '#0a0a20',
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 0 },
+                    debug: false
+                }
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        const game = new Phaser.Game(config);
+
+        let player;
+        let cursors;
+        let obstacles;
+        let powerups;
+        let score = 0;
+        let highScore = localStorage.getItem('natalieGameHighScore') || 0;
+        let scoreText;
+        let highScoreText;
+        let gameOver = false;
+        let gameSpeed = 200;
+        let obstacleTimer = 0;
+        let powerupTimer = 0;
+        let stars;
+        let keys;
+
+        function preload() {
+            // We'll create graphics programmatically instead of loading images
+        }
+
+        function create() {
+            // Resume audio context on user interaction
+            this.input.once('pointerdown', () => {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            });
+
+            // Create starfield background
+            stars = this.add.group();
+            for (let i = 0; i < 100; i++) {
+                const star = this.add.circle(
+                    Phaser.Math.Between(0, 1000),
+                    Phaser.Math.Between(0, 600),
+                    Phaser.Math.Between(1, 2),
+                    0xffffff,
+                    0.8
+                );
+                stars.add(star);
+            }
+
+            // Create player (Natalie the Superhero!)
+            const graphics = this.add.graphics();
+            
+            // Cape
+            graphics.fillStyle(0xDC143C, 1);
+            graphics.fillRect(5, 10, 15, 25);
+            
+            // Body
+            graphics.fillStyle(0xD91C5C, 1);
+            graphics.fillRect(10, 15, 20, 20);
+            
+            // Head
+            graphics.fillStyle(0xFFDAB9, 1);
+            graphics.fillCircle(20, 12, 8);
+            
+            // Emblem 'N'
+            graphics.fillStyle(0xFFD700, 1);
+            graphics.fillRect(16, 20, 8, 8);
+            
+            // Belt
+            graphics.fillStyle(0xFFD700, 1);
+            graphics.fillRect(10, 30, 20, 3);
+            
+            // Generate texture from graphics
+            graphics.generateTexture('player', 40, 50);
+            graphics.destroy();
+
+            player = this.physics.add.sprite(100, 300, 'player');
+            player.setCollideWorldBounds(true);
+            player.setScale(1.5);
+
+            // Create obstacle graphic (red bug)
+            const obsGraphics = this.add.graphics();
+            obsGraphics.fillStyle(0xFF0000, 1);
+            obsGraphics.fillCircle(15, 15, 15);
+            obsGraphics.fillStyle(0x8B0000, 1);
+            obsGraphics.fillCircle(15, 15, 10);
+            obsGraphics.generateTexture('obstacle', 30, 30);
+            obsGraphics.destroy();
+
+            // Create powerup graphic (golden gear)
+            const powerGraphics = this.add.graphics();
+            powerGraphics.fillStyle(0xFFD700, 1);
+            powerGraphics.fillCircle(12, 12, 12);
+            powerGraphics.fillStyle(0xFFA500, 1);
+            powerGraphics.fillCircle(12, 12, 6);
+            powerGraphics.generateTexture('powerup', 24, 24);
+            powerGraphics.destroy();
+
+            // Create groups
+            obstacles = this.physics.add.group();
+            powerups = this.physics.add.group();
+
+            // Input
+            cursors = this.input.keyboard.createCursorKeys();
+            keys = this.input.keyboard.addKeys('W,S,A,D');
+
+            // Collision
+            this.physics.add.overlap(player, obstacles, hitObstacle, null, this);
+            this.physics.add.overlap(player, powerups, collectPowerup, null, this);
+
+            // Score text
+            scoreText = this.add.text(16, 16, 'Score: 0', {
+                fontSize: '28px',
+                fill: '#6DD4C8',
+                fontStyle: 'bold',
+                stroke: '#000000',
+                strokeThickness: 4
+            });
+
+            highScoreText = this.add.text(16, 50, `High Score: ${highScore}`, {
+                fontSize: '20px',
+                fill: '#FFD700',
+                fontStyle: 'bold',
+                stroke: '#000000',
+                strokeThickness: 3
+            });
+
+            // Welcome message
+            const welcomeText = this.add.text(500, 250, 'AUTOMATION QUEST', {
+                fontSize: '48px',
+                fill: '#D91C5C',
+                fontStyle: 'bold',
+                stroke: '#000000',
+                strokeThickness: 6
+            }).setOrigin(0.5);
+
+            const startText = this.add.text(500, 320, 'Press ANY KEY to Start!', {
+                fontSize: '24px',
+                fill: '#6DD4C8',
+                fontStyle: 'bold',
+                stroke: '#000000',
+                strokeThickness: 4
+            }).setOrigin(0.5);
+
+            // Pulsing animation for start text
+            this.tweens.add({
+                targets: startText,
+                alpha: 0.3,
+                duration: 800,
+                yoyo: true,
+                repeat: -1
+            });
+
+            // Start game on key press
+            this.input.keyboard.once('keydown', () => {
+                welcomeText.destroy();
+                startText.destroy();
+                playWhooshSound();
+            });
+        }
+
+        function update(time, delta) {
+            if (gameOver) {
+                return;
+            }
+
+            // Player movement
+            const speed = 400;
+            
+            player.setVelocity(0);
+
+            if (cursors.left.isDown || keys.A.isDown) {
+                player.setVelocityX(-speed);
+                player.angle = -10;
+            } else if (cursors.right.isDown || keys.D.isDown) {
+                player.setVelocityX(speed);
+                player.angle = 10;
+            } else {
+                player.angle = 0;
+            }
+
+            if (cursors.up.isDown || keys.W.isDown) {
+                player.setVelocityY(-speed);
+            } else if (cursors.down.isDown || keys.S.isDown) {
+                player.setVelocityY(speed);
+            }
+
+            // Animate stars
+            stars.children.entries.forEach(star => {
+                star.x -= 2;
+                if (star.x < 0) {
+                    star.x = 1000;
+                    star.y = Phaser.Math.Between(0, 600);
+                }
+            });
+
+            // Spawn obstacles
+            obstacleTimer += delta;
+            if (obstacleTimer > 1500 - (score * 2)) { // Faster spawning as score increases
+                spawnObstacle(this);
+                obstacleTimer = 0;
+            }
+
+            // Spawn powerups
+            powerupTimer += delta;
+            if (powerupTimer > 3000) {
+                spawnPowerup(this);
+                powerupTimer = 0;
+            }
+
+            // Move obstacles and powerups
+            obstacles.children.entries.forEach(obstacle => {
+                obstacle.x -= gameSpeed * delta / 1000;
+                obstacle.rotation += 0.05;
+                if (obstacle.x < -50) {
+                    obstacle.destroy();
+                }
+            });
+
+            powerups.children.entries.forEach(powerup => {
+                powerup.x -= gameSpeed * delta / 1000;
+                powerup.rotation += 0.08;
+                powerup.scale = 1 + Math.sin(time / 200) * 0.2;
+                if (powerup.x < -50) {
+                    powerup.destroy();
+                }
+            });
+
+            // Increase score over time
+            score += delta / 100;
+            scoreText.setText(`Score: ${Math.floor(score)}`);
+
+            // Increase difficulty
+            gameSpeed = 200 + score * 0.5;
+        }
+
+        function spawnObstacle(scene) {
+            const y = Phaser.Math.Between(50, 550);
+            const obstacle = obstacles.create(1000, y, 'obstacle');
+            obstacle.setScale(1.5);
+            
+            // Add pulsing effect
+            scene.tweens.add({
+                targets: obstacle,
+                scale: 2,
+                duration: 500,
+                yoyo: true,
+                repeat: -1
+            });
+        }
+
+        function spawnPowerup(scene) {
+            const y = Phaser.Math.Between(50, 550);
+            const powerup = powerups.create(1000, y, 'powerup');
+            powerup.setScale(2);
+            
+            // Add glow effect
+            const glow = scene.add.circle(powerup.x, powerup.y, 20, 0xFFD700, 0.3);
+            scene.tweens.add({
+                targets: glow,
+                scale: 1.5,
+                alpha: 0,
+                duration: 800,
+                repeat: -1
+            });
+        }
+
+        function hitObstacle(player, obstacle) {
+            playCrashSound();
+            gameOver = true;
+
+            // Save high score
+            if (Math.floor(score) > highScore) {
+                highScore = Math.floor(score);
+                localStorage.setItem('natalieGameHighScore', highScore);
+            }
+
+            // Explosion effect
+            const particles = this.add.particles(player.x, player.y, 'obstacle', {
+                speed: { min: 100, max: 300 },
+                scale: { start: 0.8, end: 0 },
+                blendMode: 'ADD',
+                lifespan: 600,
+                gravityY: 0
+            });
+
+            particles.explode(20);
+
+            player.setTint(0xff0000);
+            player.setVelocity(0);
+
+            // Game over text
+            const gameOverText = this.add.text(500, 250, 'GAME OVER!', {
+                fontSize: '64px',
+                fill: '#D91C5C',
+                fontStyle: 'bold',
+                stroke: '#000000',
+                strokeThickness: 8
+            }).setOrigin(0.5);
+
+            const finalScoreText = this.add.text(500, 330, `Final Score: ${Math.floor(score)}`, {
+                fontSize: '32px',
+                fill: '#6DD4C8',
+                fontStyle: 'bold',
+                stroke: '#000000',
+                strokeThickness: 5
+            }).setOrigin(0.5);
+
+            let restartText;
+            if (Math.floor(score) > highScore - Math.floor(score)) {
+                restartText = this.add.text(500, 400, `NEW HIGH SCORE! 🎉\nPress SPACE to Restart`, {
+                    fontSize: '24px',
+                    fill: '#FFD700',
+                    fontStyle: 'bold',
+                    stroke: '#000000',
+                    strokeThickness: 4,
+                    align: 'center'
+                }).setOrigin(0.5);
+            } else {
+                restartText = this.add.text(500, 400, `High Score: ${highScore}\nPress SPACE to Restart`, {
+                    fontSize: '24px',
+                    fill: '#FFD700',
+                    fontStyle: 'bold',
+                    stroke: '#000000',
+                    strokeThickness: 4,
+                    align: 'center'
+                }).setOrigin(0.5);
+            }
+
+            // Pulsing restart text
+            this.tweens.add({
+                targets: restartText,
+                alpha: 0.5,
+                duration: 600,
+                yoyo: true,
+                repeat: -1
+            });
+
+            // Restart on space
+            this.input.keyboard.once('keydown-SPACE', () => {
+                this.scene.restart();
+                score = 0;
+                gameOver = false;
+                gameSpeed = 200;
+            });
+        }
+
+        function collectPowerup(player, powerup) {
+            playCollectSound();
+            
+            // Particle effect
+            const particles = this.add.particles(powerup.x, powerup.y, 'powerup', {
+                speed: { min: 50, max: 200 },
+                scale: { start: 1, end: 0 },
+                blendMode: 'ADD',
+                lifespan: 400,
+                gravityY: 0
+            });
+
+            particles.explode(15);
+
+            powerup.destroy();
+            
+            // Add bonus points
+            score += 50;
+            
+            // Flash score text
+            this.tweens.add({
+                targets: scoreText,
+                scale: 1.5,
+                duration: 100,
+                yoyo: true
+            });
+
+            // Temporary speed boost
+            const originalSpeed = gameSpeed;
+            gameSpeed *= 0.7;
+            
+            this.time.delayedCall(2000, () => {
+                gameSpeed = originalSpeed + score * 0.5;
+            });
+        }
+    </script>
+</body>
+</html>
