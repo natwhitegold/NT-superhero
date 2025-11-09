@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natalie's Superhero Game - Share Links</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a20 0%, #000000 100%);
+            color: white;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #FFFFFF 0%, #00FFFF 30%, #FF007F 60%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #00FFFF;
+            font-weight: 600;
+        }
+
+        .links-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .link-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 0, 127, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .link-item:hover {
+            border-color: #FF007F;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 0, 127, 0.4);
+        }
+
+        .link-title {
+            font-size: 1.3rem;
+            color: #00FFFF;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .link-description {
+            color: #b8b8b8;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .link-url {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .url-box {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: #FFD700;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #FF007F 0%, #FF1493 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(255, 0, 127, 0.6);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.98);
+        }
+
+        .copied {
+            background: linear-gradient(135deg, #00FF00 0%, #00CC00 100%);
+        }
+
+        .instructions {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #b8b8b8;
+            line-height: 2;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .instructions code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #00FFFF;
+            font-family: monospace;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .badge-ios {
+            background: rgba(0, 122, 255, 0.3);
+            border: 1px solid #007AFF;
+            color: #00FFFF;
+        }
+
+        .badge-android {
+            background: rgba(61, 220, 132, 0.3);
+            border: 1px solid #3DDC84;
+            color: #3DDC84;
+        }
+
+        .badge-web {
+            background: rgba(255, 215, 0, 0.3);
+            border: 1px solid #FFD700;
+            color: #FFD700;
+        }
+
+        .qr-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .qr-placeholder {
+            background: rgba(255, 255, 255, 0.9);
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #333;
+            border: 3px solid #FF007F;
+        }
+
+        .note {
+            background: rgba(255, 0, 127, 0.1);
+            border-left: 4px solid #FF007F;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            color: #b8b8b8;
+            font-size: 0.95rem;
+        }
+
+        .note strong {
+            color: #FF007F;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .links-section {
+                padding: 25px 20px;
+            }
+
+            .link-url {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .copy-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦸‍♀️ Superhero Game Mobile 🚀</h1>
+            <p class="subtitle">Share your game with the world!</p>
+        </div>
+
+        <div class="instructions">
+            <h3>📱 How to Share Your Game</h3>
+            <ol>
+                <li><strong>For Local Testing:</strong> Use Expo Go app on your phone and scan the QR code when you run <code>npm start</code></li>
+                <li><strong>For Web Sharing:</strong> Deploy to GitHub Pages, Netlify, or Vercel (see Web App link below)</li>
+                <li><strong>For App Stores:</strong> Use <code>eas build</code> to create iOS/Android builds (requires Expo account)</li>
+            </ol>
+        </div>
+
+        <div class="links-section">
+            <div class="section-title">
+                🌐 Development Links
+            </div>
+
+            <div class="link-item">
+                <div class="link-title">
+                    Local Development Server
+                    <span class="platform-badge badge-web">WEB</span>
+                    <span class="platform-badge badge-ios">iOS</span>
+                    <span class="platform-badge badge-android">ANDROID</span>
+                </div>
+                <div class="link-description">
+                    Run <code>npm start</code> in your project directory, then scan the QR code with Expo Go app
+                </div>
+                <div class="link-url">
+                    <div class="url-box">exp://[YOUR-IP-ADDRESS]:8081</div>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'exp://[YOUR-IP-ADDRESS]:8081')">Copy</button>
+                </div>
+                <div class="note">
+                    <strong>Note:</strong> Get your actual development URL by running <code>npm start</code> in the terminal
+                </div>
+            </div>
+
+            <div class="link-item">
+                <div class="link-title">
+                    Web Version (Browser)
+                    <span class="platform-badge badge-web">WEB</span>
+                </div>
+                <div class="link-description">
+                    Test in your web browser (great for desktop testing)
+                </div>
+                <div class="link-url">
+                    <div class="url-box">http://localhost:8081</div>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'http://localhost:8081')">Copy</button>
+                </div>
+                <div class="note">
+                    <strong>Run:</strong> <code>npm run web</code> to start the web version
+                </div>
+            </div>
+        </div>
+
+        <div class="links-section">
+            <div class="section-title">
+                🚀 Production Deployment Options
+            </div>
+
+            <div class="link-item">
+                <div class="link-title">
+                    Expo Publish
+                    <span class="platform-badge badge-ios">iOS</span>
+                    <span class="platform-badge badge-android">ANDROID</span>
+                </div>
+                <div class="link-description">
+                    Publish to Expo's servers for easy sharing via QR code or link
+                </div>
+                <div class="link-url">
+                    <div class="url-box">eas update --branch production</div>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'eas update --branch production')">Copy Command</button>
+                </div>
+                <div class="note">
+                    <strong>Setup:</strong> Run <code>npm install -g eas-cli && eas login</code> first
+                </div>
+            </div>
+
+            <div class="link-item">
+                <div class="link-title">
+                    GitHub Pages (Web)
+                    <span class="platform-badge badge-web">WEB</span>
+                </div>
+                <div class="link-description">
+                    Deploy web version to GitHub Pages for free hosting
+                </div>
+                <div class="link-url">
+                    <div class="url-box">https://[your-username].github.io/superhero-game-mobile</div>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'https://[your-username].github.io/superhero-game-mobile')">Copy</button>
+                </div>
+                <div class="note">
+                    <strong>Deploy:</strong> Add <code>"homepage": "."</code> to package.json, run <code>npm run web</code>, then push the <code>web-build</code> folder to GitHub Pages
+                </div>
+            </div>
+
+            <div class="link-item">
+                <div class="link-title">
+                    Build for App Stores
+                    <span class="platform-badge badge-ios">iOS</span>
+                    <span class="platform-badge badge-android">ANDROID</span>
+                </div>
+                <div class="link-description">
+                    Create standalone apps for iOS App Store and Google Play Store
+                </div>
+                <div class="link-url">
+                    <div class="url-box">eas build --platform all</div>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'eas build --platform all')">Copy Command</button>
+                </div>
+                <div class="note">
+                    <strong>Requirements:</strong> Apple Developer account ($99/year) for iOS, Google Play Console account ($25 one-time) for Android
+                </div>
+            </div>
+        </div>
+
+        <div class="qr-section">
+            <h2 style="color: #00FFFF; margin-bottom: 20px;">📱 Quick Share via QR Code</h2>
+            <p style="color: #b8b8b8; margin-bottom: 20px;">
+                When you run <code>npm start</code>, a QR code will appear in your terminal.<br>
+                Friends can scan it with the Expo Go app to play instantly!
+            </p>
+            <div class="qr-placeholder">
+                QR Code will appear<br>when you run<br><strong>npm start</strong>
+            </div>
+        </div>
+
+        <div class="instructions" style="margin-top: 40px;">
+            <h3>💡 Quick Start Commands</h3>
+            <ol>
+                <li><code>cd /Users/nataliewhite/Desktop/superhero-game-mobile</code></li>
+                <li><code>npm start</code> - Start development server with QR code</li>
+                <li><code>npm run web</code> - Open in web browser</li>
+                <li><code>npm run ios</code> - Run iOS simulator (Mac only)</li>
+                <li><code>npm run android</code> - Run Android emulator</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(button, text) {
+            // Create temporary textarea
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+
+            // Select and copy
+            textarea.select();
+            document.execCommand('copy');
+
+            // Remove textarea
+            document.body.removeChild(textarea);
+
+            // Update button
+            const originalText = button.textContent;
+            button.textContent = '✓ Copied!';
+            button.classList.add('copied');
+
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('copied');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
